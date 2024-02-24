@@ -139,10 +139,10 @@ void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
-    filter.setCutoffFrequency(g->load());
+    filter.setCutoffFrequency(g->load()); // Function to cut off frequence
 
-    auto AudioBlock = juce::dsp::AudioBlock<float>(buffer);
-    auto context = juce::dsp::ProcessContextReplacing<float>(AudioBlock);
+    auto AudioBlock = juce::dsp::AudioBlock<float>(buffer); // AudioBlock is a thing which just points to the buffer
+    auto context = juce::dsp::ProcessContextReplacing<float>(AudioBlock); // Here it is just overriding the buffer
 
     filter.process(context);
 }
@@ -174,7 +174,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimpleVSTAudioProcessor::cre
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("LowCut Freq",
                                                            "LowCut Freq",
-                                                           juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 1.0f),20.0f));
+                                                           juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 1.0f),20000.0f));
     return layout;
 }
 
