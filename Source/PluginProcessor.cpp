@@ -84,12 +84,18 @@ void SimpleVSTAudioProcessor::changeProgramName (int index, const juce::String& 
 //==============================================================================
 void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    filter.reset();
+    
     /////////// Hands to the dsp module basic parameters to work with ////////////
+    
     juce::dsp::ProcessSpec specs;
 
     specs.maximumBlockSize = samplesPerBlock;
-    specs.numChannels = getNumInputChannels();
+    specs.numChannels = getTotalNumInputChannels();
     specs.sampleRate = sampleRate;
+   
+    filter.prepare(specs);
+
     ///////////////////////////////////////////////////////////////////////////////
 }
 
@@ -128,11 +134,17 @@ void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
     auto g = apvts.getRawParameterValue("LowCut Freq");
-    g->load();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i){
+        buffer.clear(i, 0, buffer.getNumSamples());
+    }
 
+    filter.setCutoffFrequency(g->load());
+
+    auto AudioBlock = juce::dsp::AudioBlock<float>(buffer);
+    auto context = juce::dsp::ProcessContextReplacing<float>(AudioBlock);
+
+    filter.process(context);
 }
 
 //==============================================================================
@@ -171,8 +183,6 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new SimpleVSTAudioProcessor();
 }
 
-void SimpleVSTAudioProcessor::reset()
-{
-    filter.reset();
+void SimpleVSTAudioProcessor::setType() {
+    filter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
 }
-

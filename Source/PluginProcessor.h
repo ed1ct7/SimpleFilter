@@ -51,7 +51,7 @@ public:
 private:
 
     juce::dsp::StateVariableTPTFilter<float> filter; // Creates a filter
-    void reset() override;
+    void setType();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleVSTAudioProcessor)
 };
