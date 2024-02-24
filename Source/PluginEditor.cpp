@@ -10,6 +10,8 @@ SimpleVSTAudioProcessorEditor::SimpleVSTAudioProcessorEditor (SimpleVSTAudioProc
     LowCut.setSliderStyle(juce::Slider::SliderStyle::Rotary); // Slider style
     LowCut.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 20); //  Text box position
 
+    LowCutAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "LowCut Freq", LowCut); // Attaches slider with apvts
+
     setSize (400, 300);
 }
 

@@ -84,7 +84,13 @@ void SimpleVSTAudioProcessor::changeProgramName (int index, const juce::String& 
 //==============================================================================
 void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    /////////// Hands to the dsp module basic parameters to work with ////////////
+    juce::dsp::ProcessSpec specs;
 
+    specs.maximumBlockSize = samplesPerBlock;
+    specs.numChannels = getNumInputChannels();
+    specs.sampleRate = sampleRate;
+    ///////////////////////////////////////////////////////////////////////////////
 }
 
 void SimpleVSTAudioProcessor::releaseResources()
@@ -120,6 +126,9 @@ void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+
+    auto g = apvts.getRawParameterValue("LowCut Freq");
+    g->load();
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
@@ -157,10 +166,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimpleVSTAudioProcessor::cre
     return layout;
 }
 
-
-//==============================================================================
-// This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new SimpleVSTAudioProcessor();
 }
+
+void SimpleVSTAudioProcessor::reset()
+{
+    filter.reset();
+}
+

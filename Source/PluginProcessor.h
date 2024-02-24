@@ -48,8 +48,10 @@ public:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", createParameterLayout() }; // Constructor for apvts
 
-
 private:
-    //==============================================================================
+
+    juce::dsp::StateVariableTPTFilter<float> filter; // Creates a filter
+    void reset() override;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleVSTAudioProcessor)
 };
