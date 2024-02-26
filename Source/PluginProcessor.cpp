@@ -84,8 +84,6 @@ void SimpleVSTAudioProcessor::changeProgramName (int index, const juce::String& 
 //==============================================================================
 void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    filter.reset();
-    
     /////////// Hands to the dsp module basic parameters to work with ////////////
     
     juce::dsp::ProcessSpec specs;
@@ -97,6 +95,8 @@ void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     filter.prepare(specs);
 
     ///////////////////////////////////////////////////////////////////////////////
+
+    filter.reset();
 }
 
 void SimpleVSTAudioProcessor::releaseResources()
@@ -140,6 +140,7 @@ void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     }
 
     filter.setCutoffFrequency(g->load()); // Function to cut off frequence
+    filter.setResonance(1 / sqrt(2));
 
     auto AudioBlock = juce::dsp::AudioBlock<float>(buffer); // AudioBlock is a thing which just points to the buffer
     auto context = juce::dsp::ProcessContextReplacing<float>(AudioBlock); // Here it is just overriding the buffer
@@ -169,7 +170,7 @@ void SimpleVSTAudioProcessor::setStateInformation (const void* data, int sizeInB
 
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout SimpleVSTAudioProcessor::createParameterLayout() //Basicly place which collects all the information from and for the GUI 
+juce::AudioProcessorValueTreeState::ParameterLayout SimpleVSTAudioProcessor::createParameterLayout() // Basicly this is a place which collects all the information from and for the GUI 
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("LowCut Freq",
