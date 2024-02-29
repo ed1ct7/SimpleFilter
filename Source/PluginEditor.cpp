@@ -5,12 +5,12 @@
 SimpleVSTAudioProcessorEditor::SimpleVSTAudioProcessorEditor (SimpleVSTAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    addAndMakeVisible(LowCut); // Creats a child component
+    addAndMakeVisible(HighCut); // Creats a child component
 
-    LowCut.setSliderStyle(juce::Slider::SliderStyle::Rotary); // Slider style
-    LowCut.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 20); //  Text box position
+    HighCut.setSliderStyle(juce::Slider::SliderStyle::Rotary); // Slider style
+    HighCut.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 20); //  Text box position
 
-    LowCutAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "LowCut Freq", LowCut); // Attaches slider with apvts
+    HighCutAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "HighCut Freq", HighCut); // Attaches slider with apvts
 
     setSize (400, 300);
 }
@@ -28,5 +28,5 @@ void SimpleVSTAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SimpleVSTAudioProcessorEditor::resized()
 {
-    LowCut.setBounds(getBounds()); // This function is in charge of the placing slider on the screen
+    HighCut.setBounds(getBounds()); // This function is in charge of the placing slider on the screen
 }

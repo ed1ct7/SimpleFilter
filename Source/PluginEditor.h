@@ -18,9 +18,9 @@ public:
 
 private:
 
-    juce::Slider LowCut; // Creates a slider
+    juce::Slider HighCut; // Creates a slider
     
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> LowCutAttachment; // Makes an object to provide a connection between slider and apvts
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> HighCutAttachment; // Makes an object to provide a connection between slider and apvts
 
     SimpleVSTAudioProcessor& audioProcessor;
 

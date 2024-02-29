@@ -133,7 +133,7 @@ void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    auto g = apvts.getRawParameterValue("LowCut Freq");
+    auto g = apvts.getRawParameterValue("HighCut Freq");
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i){
         buffer.clear(i, 0, buffer.getNumSamples());
@@ -173,8 +173,8 @@ void SimpleVSTAudioProcessor::setStateInformation (const void* data, int sizeInB
 juce::AudioProcessorValueTreeState::ParameterLayout SimpleVSTAudioProcessor::createParameterLayout() // Basicly this is a place which collects all the information from and for the GUI 
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
-    layout.add(std::make_unique<juce::AudioParameterFloat>("LowCut Freq",
-                                                           "LowCut Freq",
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HighCut Freq",
+                                                           "HighCut Freq",
                                                            juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 1.0f),20000.0f));
     return layout;
 }
@@ -185,5 +185,5 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 void SimpleVSTAudioProcessor::setType() {
-    filter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+    filter.setType(juce::dsp::StateVariableTPTFilterType::highpass);
 }
