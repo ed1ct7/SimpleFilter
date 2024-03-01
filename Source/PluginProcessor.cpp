@@ -92,11 +92,11 @@ void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     specs.numChannels = getTotalNumInputChannels();
     specs.sampleRate = sampleRate;
    
-    filter.prepare(specs);
+    HPfilter.prepare(specs);
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    filter.reset();
+    HPfilter.reset();
 }
 
 void SimpleVSTAudioProcessor::releaseResources()
@@ -127,6 +127,8 @@ bool SimpleVSTAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
+
+
 void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
@@ -139,13 +141,10 @@ void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
-    filter.setCutoffFrequency(g->load()); // Function to cut off frequence
-    filter.setResonance(1 / sqrt(2));
-
     auto AudioBlock = juce::dsp::AudioBlock<float>(buffer); // AudioBlock is a thing which just points to the buffer
     auto context = juce::dsp::ProcessContextReplacing<float>(AudioBlock); // Here it is just overriding the buffer
 
-    filter.process(context);
+    HPfilter.process(context); // Does all the job
 }
 
 //==============================================================================
@@ -182,8 +181,4 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimpleVSTAudioProcessor::cre
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new SimpleVSTAudioProcessor();
-}
-
-void SimpleVSTAudioProcessor::setType() {
-    filter.setType(juce::dsp::StateVariableTPTFilterType::highpass);
 }

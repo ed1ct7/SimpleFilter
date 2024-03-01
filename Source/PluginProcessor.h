@@ -50,8 +50,10 @@ public:
 
 private:
 
-    juce::dsp::StateVariableTPTFilter<float> filter; // Creates a filter
-    void setType();
+    juce::dsp::IIR::Filter <float> HPfilter; // Creates a filter
+
+    juce::dsp::ProcessorDuplicator < juce::dsp::IIR::Filter < float >, juce::dsp::IIR::Coefficients <float>> HPFilter // Makes from mono stereo sound
+                                                      { juce::dsp::IIR::Coefficients<float>::makeHighPass(getSampleRate(), 20000.0f, 0.1f )};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleVSTAudioProcessor)
 };
