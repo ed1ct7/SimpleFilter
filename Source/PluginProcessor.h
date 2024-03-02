@@ -45,6 +45,8 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    void SimpleVSTAudioProcessor::updateFilter();
+
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", createParameterLayout() }; // Constructor for apvts
 
@@ -53,7 +55,7 @@ private:
     juce::dsp::IIR::Filter <float> HPfilter; // Creates a filter
 
     juce::dsp::ProcessorDuplicator < juce::dsp::IIR::Filter < float >, juce::dsp::IIR::Coefficients <float>> HPFilter // Makes from mono stereo sound
-                                                      { juce::dsp::IIR::Coefficients<float>::makeHighPass(getSampleRate(), 20000.0f, 0.1f )};
+                                                      { juce::dsp::IIR::Coefficients<float>::makeHighPass(getSampleRate(), 20000.0f, 0.1f ) };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleVSTAudioProcessor)
 };

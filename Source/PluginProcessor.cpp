@@ -14,10 +14,12 @@ SimpleVSTAudioProcessor::SimpleVSTAudioProcessor()
                        )
 #endif
 {
+
 }
 
 SimpleVSTAudioProcessor::~SimpleVSTAudioProcessor()
 {
+
 }
 
 //==============================================================================
@@ -127,7 +129,12 @@ bool SimpleVSTAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
+void SimpleVSTAudioProcessor::updateFilter() {
 
+    auto freq = apvts.getRawParameterValue("HighCut Freq");
+    //auto state = juce::dsp::IIR::Coefficients<float>::makeHighPass(getSampleRate(), freq, 1 / sqrt(2));
+    //HPFilter.state 
+}
 
 void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
