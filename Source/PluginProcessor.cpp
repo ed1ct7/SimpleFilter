@@ -86,19 +86,69 @@ void SimpleVSTAudioProcessor::changeProgramName (int index, const juce::String& 
 //==============================================================================
 void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    /////////// Hands to the dsp module basic parameters to work with ////////////
-    
-    juce::dsp::ProcessSpec specs;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    specs.maximumBlockSize = samplesPerBlock;
-    specs.numChannels = getTotalNumInputChannels();
-    specs.sampleRate = sampleRate;
-   
-    HPfilter.prepare(specs);
+    juce::dsp::ProcessSpec spec;
 
-    ///////////////////////////////////////////////////////////////////////////////
+    spec.maximumBlockSize = samplesPerBlock;
 
-    HPfilter.reset();
+    spec.numChannels = 1;
+
+    spec.sampleRate = sampleRate;
+
+    leftChain.prepare(spec);
+    rightChain.prepare(spec);
+
+    lowCutFreq = apvts.getRawParameterValue("LowCut Freq")->load();
+    highCutFreq = apvts.getRawParameterValue("HighCut Freq")->load();
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    auto cutCoefficientsH = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(lowCutFreq, getSampleRate(), 6);
+
+    auto& leftLowCut = leftChain.get<ChainPositions::LowCut>();
+
+    *leftLowCut.get<0>().coefficients = *cutCoefficientsH[0];
+    leftLowCut.setBypassed<0>(false);
+    *leftLowCut.get<1>().coefficients = *cutCoefficientsH[1];
+    leftLowCut.setBypassed<1>(false);
+    *leftLowCut.get<2>().coefficients = *cutCoefficientsH[2];
+    leftLowCut.setBypassed<2>(false);
+
+
+    auto& rightLowCut = rightChain.get<ChainPositions::LowCut>();
+
+    *rightLowCut.get<0>().coefficients = *cutCoefficientsH[0];
+    rightLowCut.setBypassed<0>(false);
+    *rightLowCut.get<1>().coefficients = *cutCoefficientsH[1];
+    rightLowCut.setBypassed<1>(false);
+    *rightLowCut.get<2>().coefficients = *cutCoefficientsH[2];
+    rightLowCut.setBypassed<2>(false);
+
+    auto cutCoefficientsL = juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(highCutFreq, getSampleRate(), 6);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    auto& leftHighCut = leftChain.get<ChainPositions::HighCut>();
+
+    *leftHighCut.get<0>().coefficients = *cutCoefficientsL[0];
+    leftHighCut.setBypassed<0>(false);
+    *leftHighCut.get<1>().coefficients = *cutCoefficientsL[1];
+    leftHighCut.setBypassed<1>(false);
+    *leftHighCut.get<2>().coefficients = *cutCoefficientsL[2];
+    leftHighCut.setBypassed<2>(false);
+
+
+    auto& rightHighCut = rightChain.get<ChainPositions::HighCut>();
+
+    *rightHighCut.get<0>().coefficients = *cutCoefficientsL[0];
+    rightHighCut.setBypassed<0>(false);
+    *rightHighCut.get<1>().coefficients = *cutCoefficientsL[1];
+    rightHighCut.setBypassed<1>(false);
+    *rightHighCut.get<2>().coefficients = *cutCoefficientsL[2];
+    rightHighCut.setBypassed<2>(false);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void SimpleVSTAudioProcessor::releaseResources()
@@ -139,19 +189,27 @@ void SimpleVSTAudioProcessor::updateFilter() {
 void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
+    auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    auto g = apvts.getRawParameterValue("HighCut Freq");
-
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i){
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
-    }
 
-    auto AudioBlock = juce::dsp::AudioBlock<float>(buffer); // AudioBlock is a thing which just points to the buffer
-    auto context = juce::dsp::ProcessContextReplacing<float>(AudioBlock); // Here it is just overriding the buffer
+    lowCutFreq = apvts.getRawParameterValue("LowCut Freq")->load();
+    highCutFreq = apvts.getRawParameterValue("HighCut Freq")->load();
+    ///////////////////////////////////////////////////////////////////////
 
-    HPfilter.process(context); // Does all the job
+    //////////////////////////////////////////////////////////////////////
+    juce::dsp::AudioBlock<float> block(buffer);
+
+    auto leftBlock = block.getSingleChannelBlock(0);
+    auto rightBlock = block.getSingleChannelBlock(1);
+
+    juce::dsp::ProcessContextReplacing<float> leftContext(leftBlock);
+    juce::dsp::ProcessContextReplacing<float> rightContext(rightBlock);
+
+    leftChain.process(leftContext);
+    rightChain.process(rightContext);
 }
 
 //==============================================================================
@@ -162,7 +220,8 @@ bool SimpleVSTAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* SimpleVSTAudioProcessor::createEditor()
 {
-    return new SimpleVSTAudioProcessorEditor (*this);
+    //return new SimpleEQAudioProcessorEditor (*this);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -176,12 +235,18 @@ void SimpleVSTAudioProcessor::setStateInformation (const void* data, int sizeInB
 
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout SimpleVSTAudioProcessor::createParameterLayout() // Basicly this is a place which collects all the information from and for the GUI 
+juce::AudioProcessorValueTreeState::ParameterLayout SimpleVSTAudioProcessor::createParameterLayout()
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowCut Freq",
+                                                            "LowCut Freq",
+                                                            juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f),20.f));
+
     layout.add(std::make_unique<juce::AudioParameterFloat>("HighCut Freq",
-                                                           "HighCut Freq",
-                                                           juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 1.0f),20000.0f));
+                                                            "HighCut Freq",
+                                                            juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f),20000.f));
+
     return layout;
 }
 

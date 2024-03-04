@@ -51,11 +51,20 @@ public:
     juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", createParameterLayout() }; // Constructor for apvts
 
 private:
+    
+    using Filter = juce::dsp::IIR::Filter<float>;
+    using CutFilter = juce::dsp::ProcessorChain<Filter, Filter, Filter>;
+    using MonoChain = juce::dsp::ProcessorChain<CutFilter, CutFilter>;
 
-    juce::dsp::IIR::Filter <float> HPfilter; // Creates a filter
+    MonoChain leftChain, rightChain;
 
-    juce::dsp::ProcessorDuplicator < juce::dsp::IIR::Filter < float >, juce::dsp::IIR::Coefficients <float>> HPFilter // Makes from mono stereo sound
-                                                      { juce::dsp::IIR::Coefficients<float>::makeHighPass(getSampleRate(), 20000.0f, 0.1f ) };
+    enum ChainPositions
+    {
+        LowCut,
+        HighCut
+    };
+
+    float lowCutFreq{ 0 }, highCutFreq{ 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleVSTAudioProcessor)
 };
