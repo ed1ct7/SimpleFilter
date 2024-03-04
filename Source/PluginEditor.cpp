@@ -42,6 +42,6 @@ void SimpleVSTAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SimpleVSTAudioProcessorEditor::resized()
 {
-    HighCut.setBounds(getWidth()/2, 0, getWidth() / 2, getHeight()); // This function is in charge of placing slider on the screen
-    LowCut.setBounds(0, 0, getWidth() / 2, getHeight());
+    HighCut.setBounds(getWidth()/2, getHeight() / 2, getWidth() / 2, getHeight()/2); // This function is in charge of placing slider on the screen
+    LowCut.setBounds(0, getHeight() / 2, getWidth() / 2, getHeight()/2);
 }
