@@ -84,7 +84,7 @@ void SimpleVSTAudioProcessor::changeProgramName (int index, const juce::String& 
 }
 
 //==============================================================================
-void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void SimpleVSTAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -98,11 +98,37 @@ void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
     leftChain.prepare(spec);
     rightChain.prepare(spec);
+}
 
-    lowCutFreq = apvts.getRawParameterValue("LowCut Freq")->load();
-    highCutFreq = apvts.getRawParameterValue("HighCut Freq")->load();
+void SimpleVSTAudioProcessor::releaseResources()
+{
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
+#ifndef JucePlugin_PreferredChannelConfigurations
+bool SimpleVSTAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+{
+  #if JucePlugin_IsMidiEffect
+    juce::ignoreUnused (layouts);
+    return true;
+  #else
+
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
+     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+        return false;
+
+    // This checks if the input layout matches the output layout
+   #if ! JucePlugin_IsSynth
+    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
+        return false;
+   #endif
+
+    return true;
+  #endif
+}
+#endif
+
+void SimpleVSTAudioProcessor::updateFilter() {
 
     auto cutCoefficientsH = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(lowCutFreq, getSampleRate(), 6);
 
@@ -147,43 +173,6 @@ void SimpleVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     rightHighCut.setBypassed<1>(false);
     *rightHighCut.get<2>().coefficients = *cutCoefficientsL[2];
     rightHighCut.setBypassed<2>(false);
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-
-void SimpleVSTAudioProcessor::releaseResources()
-{
-
-}
-
-#ifndef JucePlugin_PreferredChannelConfigurations
-bool SimpleVSTAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
-{
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-  #else
-
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-        return false;
-
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
-
-    return true;
-  #endif
-}
-#endif
-
-void SimpleVSTAudioProcessor::updateFilter() {
-
-    auto freq = apvts.getRawParameterValue("HighCut Freq");
-    //auto state = juce::dsp::IIR::Coefficients<float>::makeHighPass(getSampleRate(), freq, 1 / sqrt(2));
-    //HPFilter.state 
 }
 
 void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -197,9 +186,9 @@ void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
     lowCutFreq = apvts.getRawParameterValue("LowCut Freq")->load();
     highCutFreq = apvts.getRawParameterValue("HighCut Freq")->load();
-    ///////////////////////////////////////////////////////////////////////
 
-    //////////////////////////////////////////////////////////////////////
+    updateFilter();
+
     juce::dsp::AudioBlock<float> block(buffer);
 
     auto leftBlock = block.getSingleChannelBlock(0);
@@ -220,8 +209,7 @@ bool SimpleVSTAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* SimpleVSTAudioProcessor::createEditor()
 {
-    //return new SimpleEQAudioProcessorEditor (*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+    return new SimpleVSTAudioProcessorEditor(*this);
 }
 
 //==============================================================================
