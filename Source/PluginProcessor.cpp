@@ -135,44 +135,31 @@ void SimpleVSTAudioProcessor::updateFilter() {
     auto& leftLowCut = leftChain.get<ChainPositions::LowCut>();
 
     *leftLowCut.get<0>().coefficients = *cutCoefficientsH[0];
-    leftLowCut.setBypassed<0>(false);
     *leftLowCut.get<1>().coefficients = *cutCoefficientsH[1];
-    leftLowCut.setBypassed<1>(false);
     *leftLowCut.get<2>().coefficients = *cutCoefficientsH[2];
-    leftLowCut.setBypassed<2>(false);
 
 
     auto& rightLowCut = rightChain.get<ChainPositions::LowCut>();
 
     *rightLowCut.get<0>().coefficients = *cutCoefficientsH[0];
-    rightLowCut.setBypassed<0>(false);
     *rightLowCut.get<1>().coefficients = *cutCoefficientsH[1];
-    rightLowCut.setBypassed<1>(false);
     *rightLowCut.get<2>().coefficients = *cutCoefficientsH[2];
-    rightLowCut.setBypassed<2>(false);
 
     auto cutCoefficientsL = juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(highCutFreq, getSampleRate(), 6);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     auto& leftHighCut = leftChain.get<ChainPositions::HighCut>();
-
     *leftHighCut.get<0>().coefficients = *cutCoefficientsL[0];
-    leftHighCut.setBypassed<0>(false);
     *leftHighCut.get<1>().coefficients = *cutCoefficientsL[1];
-    leftHighCut.setBypassed<1>(false);
     *leftHighCut.get<2>().coefficients = *cutCoefficientsL[2];
-    leftHighCut.setBypassed<2>(false);
+
 
 
     auto& rightHighCut = rightChain.get<ChainPositions::HighCut>();
-
     *rightHighCut.get<0>().coefficients = *cutCoefficientsL[0];
-    rightHighCut.setBypassed<0>(false);
     *rightHighCut.get<1>().coefficients = *cutCoefficientsL[1];
-    rightHighCut.setBypassed<1>(false);
     *rightHighCut.get<2>().coefficients = *cutCoefficientsL[2];
-    rightHighCut.setBypassed<2>(false);
 }
 
 void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
