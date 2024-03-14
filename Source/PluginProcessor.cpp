@@ -72,6 +72,7 @@ int SimpleVSTAudioProcessor::getCurrentProgram()
 
 void SimpleVSTAudioProcessor::setCurrentProgram (int index)
 {
+
 }
 
 const juce::String SimpleVSTAudioProcessor::getProgramName (int index)
@@ -81,6 +82,7 @@ const juce::String SimpleVSTAudioProcessor::getProgramName (int index)
 
 void SimpleVSTAudioProcessor::changeProgramName (int index, const juce::String& newName)
 {
+
 }
 
 //==============================================================================
@@ -98,6 +100,8 @@ void SimpleVSTAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlo
 
     leftChain.prepare(spec);
     rightChain.prepare(spec);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void SimpleVSTAudioProcessor::releaseResources()
@@ -132,12 +136,13 @@ void SimpleVSTAudioProcessor::updateFilter() {
 
     auto cutCoefficientsH = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(lowCutFreq, getSampleRate(), 6);
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     auto& leftLowCut = leftChain.get<ChainPositions::LowCut>();
 
     *leftLowCut.get<0>().coefficients = *cutCoefficientsH[0];
     *leftLowCut.get<1>().coefficients = *cutCoefficientsH[1];
     *leftLowCut.get<2>().coefficients = *cutCoefficientsH[2];
-
 
     auto& rightLowCut = rightChain.get<ChainPositions::LowCut>();
 
@@ -154,12 +159,12 @@ void SimpleVSTAudioProcessor::updateFilter() {
     *leftHighCut.get<1>().coefficients = *cutCoefficientsL[1];
     *leftHighCut.get<2>().coefficients = *cutCoefficientsL[2];
 
-
-
     auto& rightHighCut = rightChain.get<ChainPositions::HighCut>();
     *rightHighCut.get<0>().coefficients = *cutCoefficientsL[0];
     *rightHighCut.get<1>().coefficients = *cutCoefficientsL[1];
     *rightHighCut.get<2>().coefficients = *cutCoefficientsL[2];
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void SimpleVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
