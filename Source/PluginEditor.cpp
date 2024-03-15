@@ -12,6 +12,7 @@ SimpleVSTAudioProcessorEditor::SimpleVSTAudioProcessorEditor (SimpleVSTAudioProc
     HighCut.setSliderStyle(juce::Slider::SliderStyle::Rotary); // Slider style
     HighCut.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30); //  Text box position
     HighCut.setTextValueSuffix(" hz");
+    HighCut.setTextBoxIsEditable(true);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,11 +21,17 @@ SimpleVSTAudioProcessorEditor::SimpleVSTAudioProcessorEditor (SimpleVSTAudioProc
     LowCut.setSliderStyle(juce::Slider::SliderStyle::Rotary); // Slider style
     LowCut.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30); //  Text box position
     LowCut.setTextValueSuffix(" hz");
+    LowCut.setTextBoxIsEditable(true);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     HighCutAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "HighCut Freq", HighCut); // Attaches slider with apvts
     LowCutAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "LowCut Freq", LowCut); // Attaches slider with apvts
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::beige);
+    getLookAndFeel().setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::beige);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
