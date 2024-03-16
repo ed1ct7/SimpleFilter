@@ -6,10 +6,7 @@
   <MAINGROUP id="zqtZ44" name="SimpleVST">
     <GROUP id="{6D464671-45FA-7AA8-1C7C-969604531D58}" name="Source">
       <GROUP id="{6C972023-2BBD-90CA-0846-7202C1542FFE}" name="Assets">
-        <FILE id="fp1EfD" name="7XnkBGmKW4k4EFWs7372cA.jpeg" compile="0" resource="1"
-              file="Source/Assets/7XnkBGmKW4k4EFWs7372cA.jpeg"/>
-        <FILE id="NoBFEd" name="423.jpeg" compile="0" resource="1" file="Source/Assets/423.jpeg"/>
-        <FILE id="MZRp3N" name="543.png" compile="0" resource="1" file="Source/Assets/543.png"/>
+        <FILE id="yGD7BC" name="Picture.jpg" compile="0" resource="1" file="Source/Assets/Picture.jpg"/>
       </GROUP>
       <FILE id="EYL5WX" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
