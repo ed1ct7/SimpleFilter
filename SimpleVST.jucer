@@ -7,6 +7,7 @@
     <GROUP id="{6D464671-45FA-7AA8-1C7C-969604531D58}" name="Source">
       <GROUP id="{6C972023-2BBD-90CA-0846-7202C1542FFE}" name="Assets">
         <FILE id="yGD7BC" name="Picture.jpg" compile="0" resource="1" file="Source/Assets/Picture.jpg"/>
+        <FILE id="D1RTtW" name="Picture1.jpg" compile="0" resource="1" file="Source/Assets/Picture1.jpg"/>
       </GROUP>
       <FILE id="EYL5WX" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

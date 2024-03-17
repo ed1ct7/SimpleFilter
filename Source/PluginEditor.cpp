@@ -30,8 +30,8 @@ SimpleVSTAudioProcessorEditor::SimpleVSTAudioProcessorEditor (SimpleVSTAudioProc
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::orange.darker(0.2));
-    getLookAndFeel().setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::orange.darker(0.2));
+    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::pink.darker(0.7));
+    getLookAndFeel().setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::pink.darker(0.7));
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,17 +50,15 @@ void SimpleVSTAudioProcessorEditor::paint (juce::Graphics& g)
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    background = juce::ImageCache::getFromMemory(BinaryData::Picture_jpg, BinaryData::Picture_jpgSize);
-    g.fillAll (juce::Colours::black.brighter(0.2));
+    background = juce::ImageCache::getFromMemory(BinaryData::Picture1_jpg, BinaryData::Picture1_jpgSize);
+    g.fillAll (juce::Colours::black.brighter(0.7));
     g.drawImageWithin(background, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement::stretchToFit);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    g.setColour(juce::Colours::orange.darker(0.2));
+    g.setColour(juce::Colours::pink.darker(0.7));
     g.drawRoundedRectangle(getWidth() / 2 + 35, 60, getWidth() / 2 - 70, getHeight() / 2 + 20, 20.0f, 4.0f);
     g.drawRoundedRectangle(0 + 35, 60, getWidth() / 2 - 70, getHeight() / 2 + 20, 20.0f, 4.0f);
-    g.setColour(juce::Colours::black);
-    g.fillRect(getWidth() / 2, 0, 8, getHeight());
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
