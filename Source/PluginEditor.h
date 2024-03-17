@@ -3,9 +3,6 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
-//==============================================================================
-/**
-*/
 class SimpleVSTAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
