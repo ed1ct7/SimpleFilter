@@ -30,8 +30,9 @@ SimpleVSTAudioProcessorEditor::SimpleVSTAudioProcessorEditor (SimpleVSTAudioProc
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::pink.darker(0.7));
-    getLookAndFeel().setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::pink.darker(0.7));
+    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::pink.darker(0.3));
+    getLookAndFeel().setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::pink.darker(0.3));
+    getLookAndFeel().setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::black);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,13 +51,12 @@ void SimpleVSTAudioProcessorEditor::paint (juce::Graphics& g)
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    background = juce::ImageCache::getFromMemory(BinaryData::Picture1_jpg, BinaryData::Picture1_jpgSize);
-    g.fillAll (juce::Colours::black.brighter(0.7));
+    background = juce::ImageCache::getFromMemory(BinaryData::ds2_jpg, BinaryData::ds2_jpgSize);
     g.drawImageWithin(background, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement::stretchToFit);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    g.setColour(juce::Colours::pink.darker(0.7));
+    g.setColour(juce::Colours::pink.darker(0.3));
     g.drawRoundedRectangle(getWidth() / 2 + 35, 60, getWidth() / 2 - 70, getHeight() / 2 + 20, 20.0f, 4.0f);
     g.drawRoundedRectangle(0 + 35, 60, getWidth() / 2 - 70, getHeight() / 2 + 20, 20.0f, 4.0f);
 
